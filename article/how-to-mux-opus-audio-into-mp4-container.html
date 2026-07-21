@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to Mux Opus Audio into MP4 Container - opus</title>
+    <meta name="description" content="Muxing an Opus audio stream into an MP4 container allows you to leverage a highly efficient, low-latency audio codec within the world's most widely compatible video format. While MP4 traditionally paired with AAC audio, modern standards officially suppor">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/how-to-mux-opus-audio-into-mp4-container">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How to Mux Opus Audio into MP4 Container - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/how-to-mux-opus-audio-into-mp4-container" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="Muxing an Opus audio stream into an MP4 container allows you to leverage a highly efficient, low-latency audio codec within the world's most widely compatible video format. While MP4 traditionally paired with AAC audio, modern standards officially suppor" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-to-mux-opus-audio-into-mp4-container">How to Mux Opus Audio
+into MP4 Container</h1>
+<p>Muxing an Opus audio stream into an MP4 container allows you to
+leverage a highly efficient, low-latency audio codec within the world’s
+most widely compatible video format. While MP4 traditionally paired with
+AAC audio, modern standards officially support Opus, making it an
+excellent choice for web streaming and high-fidelity playback. This
+guide provides a direct, step-by-step process for muxing Opus audio and
+video into an MP4 container using industry-standard command-line tools
+like FFmpeg and MP4Box.</p>
+<h3 id="understanding-opus-in-the-mp4-container">Understanding Opus in
+the MP4 Container</h3>
+<p>Historically, Opus audio was primarily encapsulated in Ogg (.ogg) or
+WebM (.webm) containers. However, the Moving Picture Experts Group
+(MPEG) standardized the storage of Opus in the ISO Base Media File
+Format (MP4). This integration ensures that modern media players, web
+browsers, and streaming platforms can decode the stream seamlessly
+without requiring alternative container formats.</p>
+<h3 id="method-1-muxing-with-ffmpeg">Method 1: Muxing with FFmpeg</h3>
+<p>FFmpeg is the most common and versatile tool for handling multimedia
+files. To mux an existing video stream and an Opus audio stream into an
+MP4 container without re-encoding (which preserves the original quality
+and saves processing time), use the following command:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input_video.mp4 <span class="at">-i</span> input_audio.opus <span class="at">-c:v</span> copy <span class="at">-c:a</span> copy output.mp4</span></code></pre></div>
+<p>In this command: * <code>-i input_video.mp4</code> and
+<code>-i input_audio.opus</code> specify the source input files. *
+<code>-c:v copy</code> instructs FFmpeg to copy the video stream stream
+directly without re-encoding. * <code>-c:a copy</code> copies the Opus
+audio stream directly into the MP4 container.</p>
+<p>If you have a video file with a different audio format (such as AAC
+or MP3) and want to transcode the audio to Opus while muxing it into the
+MP4 container, use this command:</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffmpeg</span> <span class="at">-i</span> input_video.mp4 <span class="at">-c:v</span> copy <span class="at">-c:a</span> libopus <span class="at">-b:a</span> 128k output.mp4</span></code></pre></div>
+<h3 id="method-2-muxing-with-mp4box">Method 2: Muxing with MP4Box</h3>
+<p>GPAC’s MP4Box is a packaged command-line utility specifically
+designed for MP4 container manipulation. It strictly adheres to ISO
+standards when multiplexing.</p>
+<p>To mux an Opus track and a video track into a new MP4 file using
+MP4Box, run:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">MP4Box</span> <span class="at">-add</span> video.mp4 <span class="at">-add</span> audio.opus <span class="at">-new</span> output.mp4</span></code></pre></div>
+<p>MP4Box will automatically recognize the Opus codec and write the
+appropriate initialization metadata required by the MP4
+specification.</p>
+<h3 id="compatibility-considerations">Compatibility Considerations</h3>
+<p>While Opus in MP4 is fully standardized, legacy media players, older
+smart TVs, and some hardware decoders may not support this specific
+combination. Before deploying Opus-in-MP4 files for broad distribution,
+ensure that your target audience’s playback environments—such as HTML5
+web players, VLC Media Player, or modern mobile operating systems—fully
+support the format.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

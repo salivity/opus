@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opus vs G.711 Audio Codec Comparison - opus</title>
+    <meta name="description" content="This article compares the modern Opus audio format with the legacy G.711 codec traditionally used in public switched telephone networks (PSTN). It explores their differences in audio quality, bandwidth efficiency, latency, and adaptability to highlight w">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/opus-vs-g-711-audio-codec-comparison">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Opus vs G.711 Audio Codec Comparison - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/opus-vs-g-711-audio-codec-comparison" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article compares the modern Opus audio format with the legacy G.711 codec traditionally used in public switched telephone networks (PSTN). It explores their differences in audio quality, bandwidth efficiency, latency, and adaptability to highlight w" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="opus-vs-g.711-audio-codec-comparison">Opus vs G.711 Audio Codec
+Comparison</h1>
+<p>This article compares the modern Opus audio format with the legacy
+G.711 codec traditionally used in public switched telephone networks
+(PSTN). It explores their differences in audio quality, bandwidth
+efficiency, latency, and adaptability to highlight why modern Voice over
+IP (VoIP) and WebRTC systems are transitioning to Opus while G.711
+remains a legacy standard.</p>
+<h2 id="technical-specifications-and-architecture">Technical
+Specifications and Architecture</h2>
+<p>G.711 is an ITU-T standard introduced in 1972. It uses pulse-code
+modulation (PCM) to represent eighth-bit logarithmic audio signals. It
+operates at a fixed bitrate of 64 kbps and is limited to narrowband
+audio, capturing frequencies between 300 Hz and 3.4 kHz. G.711 has two
+main variants: <span class="math inline">\(\mu\)</span>-law (used
+primarily in North America and Japan) and A-law (used in Europe and the
+rest of the world).</p>
+<p>Opus is an open-source, royalty-free standard standardized by the
+IETF in 2012. It is a hybrid codec that combines technologies from
+Skype’s SILK codec (optimized for human speech) and Xiph.Org’s CELT
+codec (optimized for music and low-latency audio). Opus supports
+variable bitrates ranging from 6 kbps to 510 kbps and can dynamically
+scale from narrowband (up to 4 kHz) to fullband (up to 20 kHz, which
+covers the entire range of human hearing).</p>
+<h2 id="audio-quality-and-frequency-response">Audio Quality and
+Frequency Response</h2>
+<p>The difference in audio quality between the two codecs is stark.
+G.711 is restricted to narrowband audio, resulting in the classic,
+muffled “telephone sound.” It cannot capture the high and low
+frequencies that make human speech sound natural and clear.</p>
+<p>Opus, by contrast, can scale up to fullband audio. At a fraction of
+the bitrate of G.711, Opus delivers significantly better speech
+intelligibility. At 64 kbps (the fixed bitrate of G.711), Opus can
+transmit high-fidelity, fullband stereo audio suitable for music, making
+it vastly superior for any communication platform requiring high audio
+fidelity.</p>
+<h2 id="bandwidth-efficiency-and-network-adaptability">Bandwidth
+Efficiency and Network Adaptability</h2>
+<p>G.711 requires a constant 64 kbps stream regardless of whether there
+is active speech or silence. It has no built-in mechanism to handle
+packet loss or network congestion. If a network experiences packet loss,
+G.711 audio immediately suffers from audible gaps and distortions unless
+external packet loss concealment (PLC) algorithms are applied.</p>
+<p>Opus is designed for the modern internet, where bandwidth fluctuates.
+It features: * <strong>Dynamic Bitrate Adaptation:</strong> Opus can
+adjust its bitrate on the fly in response to network congestion without
+interrupting the audio stream. * <strong>Variable Bitrate
+(VBR):</strong> It allocates more bits to complex audio segments and
+fewer bits to simple segments or silence, saving overall bandwidth. *
+<strong>In-band Forward Error Correction (FEC):</strong> Opus can insert
+a low-bitrate copy of the previous audio packet into the current packet,
+allowing the receiver to reconstruct lost data without needing
+retransmission.</p>
+<h2 id="latency-and-computational-complexity">Latency and Computational
+Complexity</h2>
+<p>G.711 has virtually zero algorithmic delay (0.125 microseconds) and
+extremely low computational complexity. It requires minimal CPU
+resources to encode and decode, which is why it has been highly
+compatible with legacy hardware and simple analog adapters.</p>
+<p>Opus is also a low-latency codec, supporting frame sizes from 2.5 ms
+to 60 ms. For real-time communication, it typically operates with a 20
+ms delay, making it indistinguishable from G.711 in terms of human
+perception. While Opus requires more processing power to encode and
+decode than G.711, this complexity is negligible for modern smartphones,
+computers, and VoIP servers.</p>
+<h2 id="summary-comparison">Summary Comparison</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th style="text-align: left;">Feature</th>
+<th style="text-align: left;">G.711</th>
+<th style="text-align: left;">Opus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Release Year</strong></td>
+<td style="text-align: left;">1972</td>
+<td style="text-align: left;">2012</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Licensing</strong></td>
+<td style="text-align: left;">Royalty-free</td>
+<td style="text-align: left;">Royalty-free (Open Source)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Bitrate</strong></td>
+<td style="text-align: left;">Fixed (64 kbps)</td>
+<td style="text-align: left;">Variable (6 kbps to 510 kbps)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Audio Bandwidth</strong></td>
+<td style="text-align: left;">Narrowband (3.4 kHz)</td>
+<td style="text-align: left;">Narrowband to Fullband (up to 20 kHz)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Packet Loss Handling</strong></td>
+<td style="text-align: left;">None (requires external PLC)</td>
+<td style="text-align: left;">Built-in Forward Error Correction
+(FEC)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Primary Use Case</strong></td>
+<td style="text-align: left;">Traditional PSTN, legacy VoIP</td>
+<td style="text-align: left;">WebRTC, modern VoIP, gaming,
+streaming</td>
+</tr>
+</tbody>
+</table></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

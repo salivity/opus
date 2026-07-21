@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Opus Handles Voiced and Unvoiced Speech - opus</title>
+    <meta name="description" content="The Opus audio format seamlessly handles the transition between voiced and unvoiced speech by utilizing a hybrid architecture that dynamically switches between two distinct encoding technologies: SILK and CELT. By constantly analyzing the input signal, O">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/how-opus-handles-voiced-and-unvoiced-speech">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Opus Handles Voiced and Unvoiced Speech - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/how-opus-handles-voiced-and-unvoiced-speech" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Opus audio format seamlessly handles the transition between voiced and unvoiced speech by utilizing a hybrid architecture that dynamically switches between two distinct encoding technologies: SILK and CELT. By constantly analyzing the input signal, O" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-opus-handles-voiced-and-unvoiced-speech">How Opus Handles
+Voiced and Unvoiced Speech</h1>
+<p>The Opus audio format seamlessly handles the transition between
+voiced and unvoiced speech by utilizing a hybrid architecture that
+dynamically switches between two distinct encoding technologies: SILK
+and CELT. By constantly analyzing the input signal, Opus determines
+whether a sound is harmonic (voiced) or noise-like (unvoiced) and
+adjusts its compression mechanisms frame-by-frame. This adaptive
+approach ensures high-fidelity speech reproduction, low latency, and
+efficient bandwidth usage without audible artifacts during
+transitions.</p>
+<h3 id="the-dual-engine-architecture">The Dual-Engine Architecture</h3>
+<p>To understand how transitions occur, it is essential to understand
+the two core engines within the Opus codec:</p>
+<ul>
+<li><strong>SILK:</strong> Developed by Skype, SILK is based on Linear
+Predictive Coding (LPC). It is highly optimized for human speech,
+particularly voiced sounds (like vowels) that have strong periodic,
+harmonic structures at lower frequencies.</li>
+<li><strong>CELT:</strong> Developed by the Xiph.Org Foundation, CELT is
+a transform-based codec using the Modified Discrete Cosine Transform
+(MDCT). It excels at capturing transients, music, and unvoiced speech
+sounds (like “s,” “f,” and “sh” consonants) that resemble high-frequency
+noise.</li>
+</ul>
+<h3 id="dynamic-mode-switching-and-hybrid-coding">Dynamic Mode Switching
+and Hybrid Coding</h3>
+<p>During active speech, the encoder performs continuous analysis on the
+audio input to determine its characteristics. Based on this analysis,
+Opus operates in one of three modes: SILK-only, CELT-only, or a hybrid
+mode.</p>
+<p>When transitioning from voiced to unvoiced speech, the encoder shifts
+its focus:</p>
+<ol type="1">
+<li><strong>Voiced Speech (SILK Dominant):</strong> For voiced speech,
+the encoder relies heavily on SILK’s Long-Term Prediction (LTP) to
+extract and compress the pitch parameters of the voice, saving data by
+predicting future waveforms based on past cycles.</li>
+<li><strong>The Transition Phase (Hybrid Mode):</strong> As speech
+transitions from a voiced vowel to an unvoiced consonant, the encoder
+often enters hybrid mode. In this mode, the audio spectrum is split at 8
+kHz. SILK encodes the lower frequencies (where residual speech energy
+lies), while CELT encodes the higher frequencies (where the unvoiced,
+noise-like consonant energy is concentrated).</li>
+<li><strong>Unvoiced Speech (CELT Dominant):</strong> For purely
+unvoiced speech, which lacks a defined pitch, SILK’s predictive models
+become inefficient. The encoder transitions to CELT (or a noise-matched
+SILK mode with disabled pitch prediction) to capture the stochastic,
+noise-like nature of the consonant using frequency-domain
+quantization.</li>
+</ol>
+<h3 id="preventing-transition-artifacts">Preventing Transition
+Artifacts</h3>
+<p>Switching between two fundamentally different encoding methods could
+easily introduce phase mismatches, clicks, or pre-echo. Opus prevents
+these issues using a process called “cross-lapping.”</p>
+<p>When the codec switches between the SILK domain and the CELT domain,
+it applies a specialized transition window. The decoded output of the
+exiting mode is smoothly faded out while the output of the entering mode
+is faded in over a brief period (typically around 5 milliseconds). This
+overlap-add process occurs entirely in the time domain, ensuring that
+the phase remains coherent and the listener hears a completely seamless,
+natural transition between voiced and unvoiced consonants.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

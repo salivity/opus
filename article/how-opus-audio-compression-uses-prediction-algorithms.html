@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Opus Audio Compression Uses Prediction Algorithms - opus</title>
+    <meta name="description" content="This article explores how the Opus audio format utilizes advanced prediction algorithms to achieve high-quality, low-latency audio compression. By combining speech-optimized Linear Predictive Coding (LPC) with transform-based audio coding, Opus dynamical">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/how-opus-audio-compression-uses-prediction-algorithms">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Opus Audio Compression Uses Prediction Algorithms - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/how-opus-audio-compression-uses-prediction-algorithms" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explores how the Opus audio format utilizes advanced prediction algorithms to achieve high-quality, low-latency audio compression. By combining speech-optimized Linear Predictive Coding (LPC) with transform-based audio coding, Opus dynamical" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-opus-audio-compression-uses-prediction-algorithms">How Opus
+Audio Compression Uses Prediction Algorithms</h1>
+<p>This article explores how the Opus audio format utilizes advanced
+prediction algorithms to achieve high-quality, low-latency audio
+compression. By combining speech-optimized Linear Predictive Coding
+(LPC) with transform-based audio coding, Opus dynamically adapts to
+different audio types, predicting future waveforms based on past data to
+drastically reduce the bandwidth required for transmission.</p>
+<p>To understand how Opus uses prediction, it is essential to look at
+its hybrid architecture, which consists of two distinct engines: SILK
+and CELT. SILK is derived from Skype’s voice codec and is highly
+optimized for speech, while CELT is designed for high-fidelity music and
+low latency. Opus can use these engines individually or combine them in
+a hybrid mode, relying heavily on predictive algorithms in both
+scenarios.</p>
+<p>The primary prediction method used in the SILK layer of Opus is
+Linear Predictive Coding (LPC). LPC operates on the principle that human
+speech is highly redundant; the sounds we make are shaped by the
+physical structure of our vocal tract, meaning subsequent audio samples
+are highly correlated with preceding ones. Instead of transmitting the
+actual raw amplitude of each audio sample, the encoder uses a
+mathematical model of the vocal tract to predict the next sample. It
+then calculates the “residual error”—the difference between the actual
+audio and the predicted audio. Because the residual error contains far
+less information than the original signal, it can be compressed much
+more efficiently. The decoder uses the same predictive model and applies
+the received residual error to reconstruct the original waveform.</p>
+<p>Within this predictive framework, Opus also utilizes Code-Excited
+Linear Prediction (CELP). This algorithm further compresses the residual
+error by matching it against a pre-defined “codebook” of mathematical
+vectors. Rather than sending the exact residual signal, the encoder
+sends an index number representing the closest match in the codebook,
+alongside a gain factor. This technique drastically reduces the bitrate
+required for clear voice transmission.</p>
+<p>Additionally, Opus implements Long-Term Prediction (LTP), often
+referred to as pitch prediction. While short-term LPC models the shape
+of the vocal tract, LTP models the periodicity of voiced speech, such as
+the vibration of the vocal cords. By identifying and predicting these
+repeating pitch patterns over longer time intervals, the codec avoids
+transmitting redundant harmonic data, saving substantial bandwidth
+during sustained vowel sounds.</p>
+<p>For music and general audio, the CELT layer takes over. While CELT
+relies primarily on the Modified Discrete Cosine Transform (MDCT) rather
+than LPC, it still incorporates predictive elements to manage
+inter-frame redundancy. CELT uses a pitch predictor in the frequency
+domain to exploit harmonic structures in music, allowing the codec to
+maintain excellent audio fidelity even at low bitrates.</p>
+<p>By seamlessly transitioning between these predictive models based on
+the input signal, the Opus format achieves unmatched versatility.
+Whether predicting the physics of human speech or the harmonic
+repetitions of musical instruments, Opus’s predictive algorithms ensure
+that only the most unpredictable, essential parts of the audio signal
+are transmitted.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

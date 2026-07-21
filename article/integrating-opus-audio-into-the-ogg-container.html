@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrating Opus Audio into the Ogg Container - opus</title>
+    <meta name="description" content="This article explains how the high-quality, low-latency Opus audio codec is encapsulated within the Ogg container format. It explores the technical specifications of this integration, including how Opus audio packets are mapped to Ogg pages, the structur">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/integrating-opus-audio-into-the-ogg-container">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Integrating Opus Audio into the Ogg Container - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/integrating-opus-audio-into-the-ogg-container" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the high-quality, low-latency Opus audio codec is encapsulated within the Ogg container format. It explores the technical specifications of this integration, including how Opus audio packets are mapped to Ogg pages, the structur" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="integrating-opus-audio-into-the-ogg-container">Integrating Opus
+Audio into the Ogg Container</h1>
+<p>This article explains how the high-quality, low-latency Opus audio
+codec is encapsulated within the Ogg container format. It explores the
+technical specifications of this integration, including how Opus audio
+packets are mapped to Ogg pages, the structure of the mandatory
+identification and comment headers, and how playback systems interpret
+the combined stream.</p>
+<h3 id="the-encapsulation-standard-rfc-7845">The Encapsulation Standard
+(RFC 7845)</h3>
+<p>The integration of the Opus audio format into the Ogg container is
+standardized by the Internet Engineering Task Force (IETF) in
+<strong>RFC 7845</strong>. This specification defines how Opus audio
+data is structured, packetized, and multiplexed within an Ogg
+bitstream.</p>
+<p>In an Ogg stream, the Opus data is treated as a “logical bitstream.”
+This stream consists of sequential Ogg pages, which contain packets of
+data. For Opus audio, the integration requires a specific sequence of
+packets, beginning with two mandatory header packets, followed by the
+actual audio data packets.</p>
+<h3 id="the-identification-header-opushead">1. The Identification Header
+(OpusHead)</h3>
+<p>The very first packet in an Ogg Opus stream must be the
+Identification Header, often referred to as <code>OpusHead</code>. This
+packet is critical for the decoder to initialize the playback engine. It
+contains the following essential configuration parameters:</p>
+<ul>
+<li><strong>Magic Signature:</strong> The packet starts with the 8-octet
+ASCII string <code>"OpusHead"</code> to identify the stream.</li>
+<li><strong>Version:</strong> An 8-bit field specifying the version of
+the encapsulation specification (currently <code>1</code> or
+<code>0</code>).</li>
+<li><strong>Channel Count:</strong> An 8-bit integer indicating the
+number of audio channels (e.g., 1 for mono, 2 for stereo, up to
+255).</li>
+<li><strong>Pre-skip:</strong> A 16-bit integer representing the number
+of samples (at 48 kHz) to discard from the beginning of the decoded
+stream. This is necessary to account for the encoder’s startup
+delay.</li>
+<li><strong>Input Sample Rate:</strong> A 32-bit integer showing the
+original sample rate of the input audio. Note that the Opus decoder
+always outputs at 48 kHz; this field is informational.</li>
+<li><strong>Output Gain:</strong> A 16-bit field specifying a volume
+adjustment to be applied when decoding.</li>
+<li><strong>Channel Mapping Family:</strong> An 8-bit value indicating
+the layout of the channels (e.g., stereo, surround sound, or custom
+mapping matrices).</li>
+</ul>
+<h3 id="the-metadata-header-opustags">2. The Metadata Header
+(OpusTags)</h3>
+<p>The second packet in the stream must be the Comment Header, known as
+<code>OpusTags</code>. This packet stores metadata using the Vorbis
+comment format. It includes:</p>
+<ul>
+<li><strong>Magic Signature:</strong> The packet starts with the 8-octet
+ASCII string <code>"OpusTags"</code>.</li>
+<li><strong>Vendor String:</strong> A length-prefixed string identifying
+the encoder software used (e.g., “libopus 1.3”).</li>
+<li><strong>User Comments:</strong> A list of tag-value pairs containing
+metadata such as <code>TITLE</code>, <code>ARTIST</code>,
+<code>ALBUM</code>, and <code>DATE</code>.</li>
+</ul>
+<h3 id="audio-data-packets-and-framing">3. Audio Data Packets and
+Framing</h3>
+<p>Following the <code>OpusHead</code> and <code>OpusTags</code>
+packets, all subsequent packets in the logical Ogg stream contain raw,
+compressed Opus audio data.</p>
+<p>Opus audio packets are mapped directly into Ogg packets. Because Ogg
+pages have a maximum size of roughly 65 KB, multiple small Opus audio
+frames (which are typically only a few dozen to a few hundred bytes) are
+grouped together into a single Ogg page to minimize overhead.</p>
+<h3 id="granule-position-and-timing">Granule Position and Timing</h3>
+<p>For synchronization and seeking, the Ogg container relies on a field
+in the page header called the <strong>granule position</strong>
+(<code>granulepos</code>).</p>
+<p>In an Ogg Opus stream, the granule position is measured in PCM
+samples at a fixed rate of <strong>48,000 samples per second</strong>,
+regardless of the original input sample rate. The granule position of an
+Ogg page represents the exact playback time of the last sample completed
+on that page. Decoders use this value to calculate elapsed time, perform
+precise seeking, and synchronize audio with video tracks in multiplexed
+files.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

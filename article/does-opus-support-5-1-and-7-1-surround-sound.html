@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Does Opus Support 5.1 and 7.1 Surround Sound? - opus</title>
+    <meta name="description" content="This article examines the multichannel capabilities of the Opus audio codec, specifically focusing on its support for 5.1 and 7.1 surround sound configurations. You will learn about the technical specifications of Opus, how it handles multi-channel audio">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/does-opus-support-5-1-and-7-1-surround-sound">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Does Opus Support 5.1 and 7.1 Surround Sound? - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/does-opus-support-5-1-and-7-1-surround-sound" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article examines the multichannel capabilities of the Opus audio codec, specifically focusing on its support for 5.1 and 7.1 surround sound configurations. You will learn about the technical specifications of Opus, how it handles multi-channel audio" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="does-opus-support-5.1-and-7.1-surround-sound">Does Opus Support
+5.1 and 7.1 Surround Sound?</h1>
+<p>This article examines the multichannel capabilities of the Opus audio
+codec, specifically focusing on its support for 5.1 and 7.1 surround
+sound configurations. You will learn about the technical specifications
+of Opus, how it handles multi-channel audio mapping, and its practical
+applications in modern streaming and gaming environments.</p>
+<p>Yes, the Opus audio format fully supports multichannel audio,
+including standard 5.1 and 7.1 surround sound configurations. In fact,
+the Opus specification is highly flexible and capable of supporting up
+to 255 discrete audio channels. This makes it an exceptionally versatile
+codec for everything from simple mono voice chat to complex spatial and
+surround sound setups.</p>
+<h3 id="technical-channel-mapping">Technical Channel Mapping</h3>
+<p>To deliver surround sound accurately, Opus utilizes predefined
+channel mapping families.</p>
+<ul>
+<li><strong>Channel Mapping Family 0:</strong> Used for mono and stereo
+(up to 2 channels).</li>
+<li><strong>Channel Mapping Family 1:</strong> Specifically designed for
+standardized surround sound configurations from 1 to 8 channels. This
+includes traditional 5.1 surround (front left, front right, center,
+LFE/subwoofer, surround left, surround right) and 7.1 surround (adding
+surround back left and surround back right).</li>
+<li><strong>Channel Mapping Family 2 &amp; 3:</strong> Designed for
+Ambisonics, which is used to deliver spherical, 3D spatial audio for
+virtual reality (VR) and 360-degree video.</li>
+</ul>
+<h3 id="bitrate-efficiency">Bitrate Efficiency</h3>
+<p>One of the primary advantages of using Opus for multichannel audio is
+its incredible compression efficiency. Because Opus can dynamically
+allocate bitrate across channels, it can encode a full 5.1 surround
+sound mix at a relatively low bitrate (such as 160 kbps to 256 kbps)
+while maintaining high-fidelity, transparent audio quality. It achieves
+this by coupling adjacent channels (like front left and front right) to
+reduce redundant data.</p>
+<h3 id="compatibility-and-limitations">Compatibility and
+Limitations</h3>
+<p>While the Opus codec itself natively supports 5.1 and 7.1 surround
+sound, your ability to experience it depends on the playback pipeline.
+Most modern software, media players (like VLC), web browsers, and
+streaming platforms (like YouTube) can decode multichannel Opus
+perfectly.</p>
+<p>However, older home theater A/V receivers do not natively decode
+Opus. In these setups, the media player software must decode the
+multichannel Opus audio and transcode it on the fly into a format the
+receiver understands, such as multi-channel LPCM, Dolby Digital (AC-3),
+or DTS.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Opus Audio Encodes Applause - opus</title>
+    <meta name="description" content="This article explains how the Opus audio codec efficiently compresses complex, transient-rich sounds like applause. We examine the technical mechanisms Opus uses, including its hybrid architecture, dynamic window switching, band-energy preservation, and">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/how-opus-audio-encodes-applause">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="How Opus Audio Encodes Applause - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/how-opus-audio-encodes-applause" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="This article explains how the Opus audio codec efficiently compresses complex, transient-rich sounds like applause. We examine the technical mechanisms Opus uses, including its hybrid architecture, dynamic window switching, band-energy preservation, and" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="how-opus-audio-encodes-applause">How Opus Audio Encodes
+Applause</h1>
+<p>This article explains how the Opus audio codec efficiently compresses
+complex, transient-rich sounds like applause. We examine the technical
+mechanisms Opus uses, including its hybrid architecture, dynamic window
+switching, band-energy preservation, and stereo masking, to prevent
+common compression artifacts like pre-echo and phase flanging during
+applause playback.</p>
+<h2 id="the-challenge-of-encoding-applause">The Challenge of Encoding
+Applause</h2>
+<p>Applause is one of the most difficult signals for any audio codec to
+compress. It consists of hundreds of individual, overlapping,
+high-frequency transients (the sharp impacts of clapping hands)
+occurring at random intervals.</p>
+<p>Traditional speech codecs struggle with applause because they rely on
+linear predictive coding (LPC), which models the human vocal tract. When
+fed applause, these codecs attempt to interpret the sharp transients as
+vocal excitation, resulting in a heavily distorted, synthetic-sounding
+output. Even general-purpose transform codecs (like MP3 or AAC) can
+struggle, often turning the distinct, crisp claps of applause into a
+watery, swirling noise due to phase issues and quantization
+limitations.</p>
+<h2 id="codec-engine-switching-silk-vs.-celt">Codec Engine Switching:
+SILK vs. CELT</h2>
+<p>The Opus codec (RFC 6716) overcomes this challenge through its unique
+hybrid architecture, which contains two distinct internal engines:</p>
+<ul>
+<li><strong>SILK:</strong> Optimized for voice, utilizing linear
+prediction.</li>
+<li><strong>CELT:</strong> Optimized for music and general audio,
+utilizing the Modified Discrete Cosine Transform (MDCT).</li>
+</ul>
+<p>When Opus processes audio, its mode-detection algorithm continuously
+analyzes the input signal. Because applause lacks the harmonic structure
+and pitch predictability of speech, Opus classifies it as a
+transient-heavy, non-speech signal. The codec bypasses the SILK engine
+entirely and processes the applause using the <strong>CELT</strong>
+engine.</p>
+<h2 id="transient-handling-and-variable-window-sizes">Transient Handling
+and Variable Window Sizes</h2>
+<p>To prevent “pre-echo”—an artifact where the quantization noise of a
+sharp clap smears backward in time and is heard right before the clap
+occurs—CELT dynamically adjusts its frame sizes.</p>
+<p>Under normal conditions, Opus uses larger frames (such as 20 ms) to
+maximize compression efficiency. However, when the CELT engine detects
+the rapid, high-energy onsets characteristic of handclaps, it instantly
+splits the frame into multiple shorter MDCT blocks (down to 2.5 ms).</p>
+<p>By using ultra-short windows for transients, Opus localizes the
+quantization noise to the exact moment of the clap. This takes advantage
+of human <strong>temporal masking</strong>, a psychoacoustic phenomenon
+where the human brain cannot perceive noise that occurs immediately
+before or after a much louder sound.</p>
+<h2 id="band-energy-and-spectral-envelope-preservation">Band Energy and
+Spectral Envelope Preservation</h2>
+<p>Unlike older codecs that attempt to encode every single wave peak,
+CELT is designed around the principle of preserving the spectral
+envelope.</p>
+<p>CELT divides the frequency spectrum into bands that mimic the
+critical bands of the human auditory system. It explicitly encodes the
+energy of each band first. Once the energy envelope is secured, the
+remaining bit budget is used to encode the details of the waveform
+within those bands using a algebraic vector quantization technique
+called Pyramidal Vector Quantization (PVQ).</p>
+<p>For applause, this means that even at low bitrates where there are
+not enough bits to match the exact waveform of every clap, Opus
+preserves the exact energy distribution across all frequencies. This
+prevents the applause from sounding muffled, “watery,” or artificially
+low-pass filtered.</p>
+<h2 id="stereo-masking-and-spatialization">Stereo Masking and
+Spatialization</h2>
+<p>Applause is inherently a wide, spatial sound. If a codec compresses
+the left and right channels independently, it wastes bits. If it forces
+them into a simple joint-stereo mix, the applause loses its width and
+sounds flat.</p>
+<p>Opus handles this by utilizing mid-side (M/S) stereo coding. It
+encodes the sum of the channels (mid) and the difference between them
+(side). For applause, the “side” channel contains a massive amount of
+decorrelated energy because the claps come from different directions.
+Opus uses dynamic bit allocation to ensure the side channel receives
+enough data to maintain spatial width. At very low bitrates, it employs
+intensity stereo coding, preserving the perceived spatial distribution
+of the claps without causing phase cancellation or flanging
+artifacts.</p></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opus Audio Resampling and Native Sample Rates - opus</title>
+    <meta name="description" content="The Opus audio codec is a highly versatile format designed for interactive speech and music transmission over the internet, operating natively at specific sample rates up to 48 kHz. When input audio does not match these native rates, Opus utilizes a high">
+    <link rel="canonical" href="https://salivity.github.io/opus/article/opus-audio-resampling-and-native-sample-rates">
+    <link rel="icon" href="/opus/favicon.ico">
+    <link rel="stylesheet" href="/opus/css/style.css">
+    <link media="print" rel="stylesheet" href="/opus/css/print.css">
+    <script src="/opus/js/fuse.min.js"></script>
+    <script src="/opus/js/script.js"></script>
+    <script id="MathJax-script" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.1.3/tex-chtml.min.js" defer></script>
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Opus Audio Resampling and Native Sample Rates - opus" />
+    <meta property="og:url" content="https://salivity.github.io/opus/article/opus-audio-resampling-and-native-sample-rates" />
+    <meta property="og:image:url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:secure_url" content="https://salivity.github.io/opus/images/open-graph/default.webp" />
+    <meta property="og:image:width" content="1120" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:description" content="The Opus audio codec is a highly versatile format designed for interactive speech and music transmission over the internet, operating natively at specific sample rates up to 48 kHz. When input audio does not match these native rates, Opus utilizes a high" />
+    <link rel="manifest" href="/opus/pwa/manifest.json" />
+</head>
+<body>
+    <header>
+        <a href="/opus/" aria-label="Go To Home Page" title="Go To Home Page" id="logo">
+            <span>salivity.github.io/</span><span>opus</span>
+        </a>
+        <nav>
+            <ul class="header-links">
+                <li><a href="https://github.com/salivity" title="Github" aria-label="Go To Github Profile Page"><svg class="svg-icon" focusable="false" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 1.27a11 11 0 00-3.48 21.46c.55.09.73-.28.73-.55v-1.84c-3.03.64-3.67-1.46-3.67-1.46-.55-1.29-1.28-1.65-1.28-1.65-.92-.65.1-.65.1-.65 1.1 0 1.73 1.1 1.73 1.1.92 1.65 2.57 1.2 3.21.92a2 2 0 01.64-1.47c-2.47-.27-5.04-1.19-5.04-5.5 0-1.1.46-2.1 1.2-2.84a3.76 3.76 0 010-2.93s.91-.28 3.11 1.1c1.8-.49 3.7-.49 5.5 0 2.1-1.38 3.02-1.1 3.02-1.1a3.76 3.76 0 010 2.93c.83.74 1.2 1.74 1.2 2.94 0 4.21-2.57 5.13-5.04 5.4.45.37.82.92.82 2.02v3.03c0 .27.1.64.73.55A11 11 0 0012 1.27"></path></svg></a></li>
+                <li><a href="/opus/search" title="Search" aria-label="Go To Search Page"><svg class="svg-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14"></path></svg></a></li>
+                <li><a id="theme-toggle" title="Theme" href="javascript:void(0);" aria-label="Toggle Website Theme"></a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article><h1 id="opus-audio-resampling-and-native-sample-rates">Opus Audio
+Resampling and Native Sample Rates</h1>
+<p>The Opus audio codec is a highly versatile format designed for
+interactive speech and music transmission over the internet, operating
+natively at specific sample rates up to 48 kHz. When input audio does
+not match these native rates, Opus utilizes a highly optimized internal
+resampling process to convert the signal. This article explains how the
+Opus codec handles non-native input sample rates, how its internal
+resampler operates, and the impact of this conversion on audio quality
+and system performance.</p>
+<h2 id="native-sample-rates-in-opus">Native Sample Rates in Opus</h2>
+<p>The Opus codec internally supports five specific native sample rates:
+* <strong>8 kHz</strong> (Narrowband) * <strong>12 kHz</strong>
+(Mediumband) * <strong>16 kHz</strong> (Wideband) * <strong>24
+kHz</strong> (Super-wideband) * <strong>48 kHz</strong> (Fullband)</p>
+<p>Regardless of the input sample rate, the Opus encoder operates
+internally at one of these rates. For most high-quality stereo and mono
+audio, the encoder defaults to 48 kHz.</p>
+<h2 id="the-internal-resampling-process">The Internal Resampling
+Process</h2>
+<p>When you feed an audio signal with a non-native sample rate—most
+commonly 44.1 kHz (the standard CD sample rate)—into the Opus encoder,
+the <code>libopus</code> library automatically resamples the audio to 48
+kHz.</p>
+<p>This process is handled by a built-in, highly optimized resampler
+derived from the Speex DSP library. The resampler uses band-limited sinc
+interpolation, which is a mathematical method designed to convert sample
+rates while preserving the original frequency response and avoiding
+aliasing.</p>
+<h3 id="encoder-side-resampling">Encoder-Side Resampling</h3>
+<ol type="1">
+<li><strong>API Detection:</strong> The Opus encoder API accepts any
+arbitrary sample rate.</li>
+<li><strong>Conversion to 48 kHz:</strong> If the input rate is not 48
+kHz (or another native rate selected by the encoder’s bandwidth decision
+logic), the internal resampler converts the signal to 48 kHz before the
+core encoding process begins.</li>
+<li><strong>Frame Size Calculation:</strong> Opus operates on fixed
+frame sizes (typically 20 ms). The resampler adjusts the number of input
+samples to match the required number of output samples per frame.</li>
+</ol>
+<h3 id="decoder-side-resampling">Decoder-Side Resampling</h3>
+<p>On the decoding side, the process is reversed. Opus natively decodes
+and outputs audio at 48 kHz. If the output device or application
+requests a different sample rate (such as 44.1 kHz or 16 kHz): 1. The
+decoder decodes the bitstream to 48 kHz. 2. The internal resampler
+downsamples or upsamples the decoded PCM audio to the rate requested by
+the application.</p>
+<h2 id="quality-and-performance-implications">Quality and Performance
+Implications</h2>
+<p>The resampling process in Opus is designed with specific trade-offs
+in mind:</p>
+<ul>
+<li><strong>High Fidelity:</strong> Sinc interpolation ensures that the
+resampling process introduces virtually no audible distortion or
+frequency loss. The frequency response remains flat, and aliasing
+artifacts are pushed far below the threshold of human hearing.</li>
+<li><strong>Low Latency:</strong> The internal resampler is optimized
+for low latency, which is critical for real-time communication
+applications like VoIP and gaming.</li>
+<li><strong>CPU Efficiency:</strong> While resampling requires
+additional CPU cycles, the <code>libopus</code> implementation is highly
+optimized for modern processors, using SIMD (Single Instruction,
+Multiple Data) instructions to minimize the computational
+footprint.</li>
+</ul></article>
+        <div id=comments-container></div>
+
+        <script>
+            const utterancesScript = document.createElement('script');
+            
+            utterancesScript.setAttribute('src', 'https://utteranc.es/client.js');
+            utterancesScript.setAttribute('repo', 'salivity/opus'); 
+            utterancesScript.setAttribute('issue-term', 'pathname'); 
+            utterancesScript.setAttribute('theme', localStorage.getItem('theme') === 'dark' ? 'github-dark' : 'github-light'); 
+            utterancesScript.setAttribute('crossorigin', 'anonymous');
+            utterancesScript.async = true;
+
+            document.getElementById('comments-container').appendChild(utterancesScript);
+        </script>
+    
+    </main>
+    <footer>
+        <nav>
+            <ul class="footer-links">
+                <li><a href="/opus/privacy-policy">Privacy Policy</a></li>
+                <li><a href="/opus/terms-and-conditions">Terms and Conditions</a></li>
+            </ul>
+        </nav>
+        <div class="copyright">
+            Copyright &copy; <span id="current-year"></span>
+        </div>
+    </footer>
+</body>
+</html>
